@@ -1,61 +1,71 @@
+// Steps to run the code on the terminal:
+// First: cd "path" ("/Users/mateussfeir/Desktop/Obj. Orient. Prog. COMP1202/genomics")
+// Second: dotnet new console [Only one time] - Delete the Program.cs generated
+// Third: dotnet build -o output [Whenever the developer makes a change.]
+// Fourth: dotnet run
+
+
+// using (to import something) and System (is the namespace that you want to import.)
 using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace YourNamespace
+// Defining a new namespace that is being created
+namespace MyGenesHunter
 {
-    class Genomics
-    {
-        // Method to find a gene in a DNA sequence
-        public string findGene(string dna)
+    // Class is a template that define a structure of the objects
+    class Gene_class
+    {   
+        // public: means the method can be accessed even outside of the class
+        // string: defines the type of value that the method will return
+        // findGenes: is the name of the method
+        // string dna: the parameter is the dna, and string is the type of value that will be passed.
+        public string findGenes(string dna)
         {
-            // Start codon: ATG
-            // Stop codon: TAA
+            // To make the program keeps searching for all the genes in the dna_sequece we need to follow these steps:
+            // Add an index = 0 and make the program start to search from this index
+            // Create a loop, and everytime one gene is found, make the index be = stopCodon + 1
+            // Print the gene found
+            int index = 0;
+            int gene_index = 1;
+            string allgenes = "";
 
-            // Find the index of the start codon (ATG) in the DNA sequence
-            // creating the varialbe startCodonIndex, and using the method "IndexOf"
-            int startCodonIndex = dna.IndexOf("ATG");
+            while (index != -1) {
+                int startCodon = dna.IndexOf("ATG", index);
+                if (startCodon == -1)
+                {
+                    break;
+                }
 
-            // If start codon is not found, print a message and return an empty string
-            // -1 indicates failure, it means the program couldn't find "ATG"
-            if (startCodonIndex == -1)
-            {
-                Console.WriteLine("Start codon (ATG) not found.");
-                return "";
-            }
+                int stopCodon = dna.IndexOf("TAA", startCodon);
+                if (stopCodon == -1)
+                {
+                    break;
+                }
+                // Substring is used to extract a piece of data.
+                string gene = dna.Substring(startCodon, stopCodon - startCodon + 3);
+                index = stopCodon + 1;
+                if ((stopCodon - startCodon) % 3 == 0) {
+                    allgenes += gene_index + ": " + gene + "\n";
+                    gene_index += 1;
+                }
+                }
 
-            // Find the index of the stop codon (TAA) after the start codon (ATG)
-            // Using ("TAA", startCodonIndex) to check only after the startCodonIndex, and not the entire string before that.
-
-            int stopCodonIndex = dna.IndexOf("TAA", startCodonIndex);
-            // If stop codon is not found after the start codon, print a message and return an empty string
-            if (stopCodonIndex == -1)
-            {
-                Console.WriteLine("Stop codon (TAA) not found after the start codon (ATG).");
-                return "";
-            }
-
-            // Report the substring between the start codon (ATG) and the stop codon (TAA), including both codons
-            // + 3 is used to include the stopCodonIndex strings.
-            string gene = dna.Substring(startCodonIndex, stopCodonIndex - startCodonIndex + 3);
-            return gene;
+            return allgenes;
         }
-    }
 
-    class Program
-    {
         static void Main(string[] args)
         {
-            // DNA sequence to search for a gene
-            string dna = "ACGATGCGTAAGC";
-            //               ^      ^ 
-           
-            // Create an instance of the Genomics class
-            // Genomics = class, genomics = variable
-            Genomics genomics = new Genomics();
+            Console.WriteLine("Welcome to the genes hunter app.");
+            string dna_sequence = "TATGACGTAGTACTAACGTCGTACGTAAGTTATGACAGTACTAACGTAGCGTACGTAAGTATGTATTAA";
 
-            // Call the findGene method to find a gene in the DNA sequence and store the result in a variable
-            string gene = genomics.findGene(dna);
-            // Print the gene found in the DNA sequence
-            Console.WriteLine("Gene found: " + gene);
+            // Create an instance of the class containing the findGenes method
+            Gene_class geneClass = new Gene_class(); // Corrected typo here
+
+            // Call the findGenes method and store the result
+            string result = geneClass.findGenes(dna_sequence);
+
+            // Output the result
+            Console.WriteLine("That's the genes found: \n" + result);
         }
     }
 }
